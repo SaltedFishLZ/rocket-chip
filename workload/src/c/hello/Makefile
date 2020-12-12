@@ -20,18 +20,18 @@ RISCV_OBJDUMP ?= $(RISCV_PREFIX)objdump --disassemble-all --disassemble-zeroes -
 
 incs  += -I$(src_dir)/common
 
-rot13.riscv: $(wildcard ./*.c) $(wildcard $(src_dir)/common/*.c) $(wildcard $(src_dir)/common/*.S)
+hello.riscv: $(wildcard ./*.c) $(wildcard $(src_dir)/common/*.c) $(wildcard $(src_dir)/common/*.S)
 	$(RISCV_GCC) $(incs) $(RISCV_GCC_OPTS) $(RISCV_LINK_OPTS) -o $@ \
 	$(wildcard ./*.c) \
 	$(wildcard $(src_dir)/common/*.c) $(wildcard $(src_dir)/common/*.S)
 
-rot13.dump: rot13.riscv
+hello.dump: hello.riscv
 	$(RISCV_OBJDUMP) $< > $@
 
-rot13.dump.annot: rot13.riscv
+hello.dump.annot: hello.riscv
 	$(RISCV_OBJDUMP) -S $< > $@
 
-all: rot13.riscv rot13.dump rot13.dump.annot
+all: hello.riscv hello.dump hello.dump.annot
 
 clean:
 	-rm -rf *.riscv *.dump *.dump.annot
