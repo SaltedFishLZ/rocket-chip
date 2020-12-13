@@ -23,10 +23,14 @@ class BaseConfig extends Config(
 )
 
 class DefaultConfig extends Config(new WithNBigCores(1) ++ new BaseConfig)
+class DefaultConfigRBB extends Config(
+  new WithJtagDTMSystem ++
+  new WithNBigCores(1) ++
+  new BaseConfig
+)
 
 class DefaultBufferlessConfig extends Config(new WithBufferlessBroadcastHub ++ new DefaultConfig)
 class DefaultSmallConfig extends Config(new WithNSmallCores(1) ++ new BaseConfig)
-class DefaultRV32Config extends Config(new WithRV32 ++ new DefaultConfig)
 
 class DualBankConfig extends Config(new WithNBanks(2) ++ new DefaultConfig)
 class DualCoreConfig extends Config( new WithNBigCores(2) ++ new BaseConfig)
@@ -74,3 +78,12 @@ class MMIOPortOnlyConfig extends Config(
 
 class BaseFPGAConfig extends Config(new BaseConfig)
 class DefaultFPGAConfig extends Config(new WithNSmallCores(1) ++ new BaseFPGAConfig)
+
+
+// 32-bit RISC-V processors
+class DefaultRV32Config extends Config(new WithRV32 ++ new DefaultConfig)
+class DefaultRV32ConfigRBB extends Config(
+  new WithJtagDTMSystem ++
+  new WithRV32 ++
+  new DefaultConfig
+)
