@@ -5,6 +5,7 @@ import sys
 import time
 import enum
 import warnings
+import argparse
 
 
 from extract_stamp import extract_stamp
@@ -33,4 +34,13 @@ def get_execution_durations(binary_prefix):
 
 
 if __name__ == "__main__":
-    get_execution_durations(binary_prefix="test")
+    parser = argparse.ArgumentParser()
+    parser.add_argument("path", metavar='N', type=str,
+                        help="folder path")
+    parser.add_argument("binary", metavar='N', type=str,
+                        help="binary prefix")
+
+    args = parser.parse_args()
+
+    file_prefix = os.path.join(args.path, args.binary)
+    get_execution_durations(binary_prefix=file_prefix)
