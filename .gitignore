@@ -6,3 +6,14 @@ project/target
 *~
 .addons-dont-touch
 /lib/
+
+
+# binary
+*.riscv
+
+# dumped asm
+*.dump
+*.dump.annot
+
+# log files
+*.log

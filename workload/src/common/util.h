@@ -88,3 +88,20 @@ static uintptr_t insn_len(uintptr_t pc)
   } while(0)
 
 #endif //__UTIL_H
+
+#ifndef NO_MAGIC_STAMP
+#define magic_stamp_addr (volatile uint32_t *)0x8F000000
+// write 0x8F_id_149A
+#define magic_start_stamp(stamp_id) \
+{ \
+  *magic_stamp_addr = ((stamp_id & 0x00FF0000) | 0x149a); \
+}
+// write 0x8F_id_249a
+#define magic_end_stamp(stamp_id) \
+{ \
+  *magic_stamp_addr = ((stamp_id & 0x00FF0000) | 0x249a); \
+}
+#else
+#define magic_start_stamp(stamp_id) {} // do nothing
+#define magic_end_stamp(stamp_id)  {} // do nothing
+#endif
