@@ -160,12 +160,12 @@ void set_stp_offset(interval_t offset) {
  */
 void print_time(instant_t time) {
     if (time < 1000LL || time < 0LL) {
-        // printf("%lld", time);
+        // // printf("%lld", time);
         return;
     }
     print_time(time/1000LL);
     int to_print = time%1000;
-    // printf (",%03d", to_print);
+    // // printf (",%03d", to_print);
 }
 
 /////////////////////////////
@@ -262,7 +262,7 @@ static void set_reaction_position(void *a, size_t pos) {
  */
 static void print_reaction(FILE *out, void *reaction) {
 	reaction_t *r = (reaction_t*)reaction;
-    // fprintf(out, "chain_id:%llu, index: %llu, reaction: %p\n", 
+    // f// printf(out, "chain_id:%llu, index: %llu, reaction: %p\n", 
         // r->chain_id, r->index, r);
 }
 
@@ -271,7 +271,7 @@ static void print_reaction(FILE *out, void *reaction) {
  */
 static void print_event(FILE *out, void *event) {
 	event_t *e = (event_t*)event;
-    // fprintf(out, "time: %lld, trigger: %p, token: %p\n",
+    // f// printf(out, "time: %lld, trigger: %p, token: %p\n",
 	// 		e->time, e->trigger, e->token);
 }
 
@@ -329,7 +329,7 @@ token_freed __done_using(lf_token_t* token) {
     token_freed result = NOT_FREED;
     if (token == NULL) return result;
     if (token->ref_count == 0) {
-        // fprintf(stderr, "WARNING: Token being freed that has already been freed: %p\n", token);
+        // f// printf(stderr, "WARNING: Token being freed that has already been freed: %p\n", token);
     } else {
         token->ref_count--;
     }
@@ -753,11 +753,11 @@ int _lf_schedule_at_tag(trigger_t* trigger, tag_t tag, lf_token_t* token) {
 
     tag_t current_logical_tag = get_current_tag();
 
-    // printf("_lf_schedule_at_tag() called with tag (%lld, %u) at tag (%lld, %u).\n",
+    // // printf("_lf_schedule_at_tag() called with tag (%lld, %u) at tag (%lld, %u).\n",
     //              tag.time - start_time, tag.microstep,
     //              current_logical_tag.time - start_time, current_logical_tag.microstep);
     if (compare_tags(tag, current_logical_tag) <= 0) {
-        // fprintf(stderr,"_lf_schedule_at_tag(): requested to schedule an event in the past.\n");
+        // f// printf(stderr,"_lf_schedule_at_tag(): requested to schedule an event in the past.\n");
         return -1;
     }
 
@@ -825,14 +825,14 @@ int _lf_schedule_at_tag(trigger_t* trigger, tag_t tag, lf_token_t* token) {
                             return 0;
                         }
                         if (found->next != NULL) {
-                            // fprintf(stderr, "_lf_schedule_at_tag: in-order contract violated.\n");
+                            // f// printf(stderr, "_lf_schedule_at_tag: in-order contract violated.\n");
                             return -1;
                         }
                         found->next = e;
                 }
-                // printf("<<<<<< _lf_schedule_at_tag: 1\n");
+                // // printf("<<<<<< _lf_schedule_at_tag: 1\n");
         } else {
-            // printf("<<<<<< _lf_schedule_at_tag: 3\n");
+            // // printf("<<<<<< _lf_schedule_at_tag: 3\n");
             // We are requesting a microstep greater than 0
             // where there is already an event for this trigger on the event queue.
             // That event may itself be a dummy event for a real event that is
@@ -855,7 +855,7 @@ int _lf_schedule_at_tag(trigger_t* trigger, tag_t tag, lf_token_t* token) {
                     // The chain stops short of where we want to be.
                     // If it exactly one microstep short of where we want to be,
                     // then we don't need a dummy. Otherwise, we do.
-                    // printf("<<<<<< _lf_schedule_at_tag: 6\n");
+                    // // printf("<<<<<< _lf_schedule_at_tag: 6\n");
                     microstep_t undershot_by = (tag.microstep - 1) - microstep_of_found;
                     if (undershot_by > 0) {
                         found->next = _lf_create_dummy_events(trigger, tag.time, e, undershot_by);
@@ -896,7 +896,7 @@ int _lf_schedule_at_tag(trigger_t* trigger, tag_t tag, lf_token_t* token) {
                             return 0;
                         }
                         if (found->next->next != NULL) {
-                            // fprintf(stderr, "_lf_schedule_at_tag: in-order contract violated.\n");
+                            // f// printf(stderr, "_lf_schedule_at_tag: in-order contract violated.\n");
                             return -1;
                         }
                         found->next->next = e;
@@ -913,10 +913,10 @@ int _lf_schedule_at_tag(trigger_t* trigger, tag_t tag, lf_token_t* token) {
                 tag.microstep == 0) {
             // Do not need a dummy event if we are scheduling at 1 microstep
             // in the future at current time or at microstep 0 in a future time.
-            // printf("<<<<<< _lf_schedule_at_tag: 11\n");
+            // // printf("<<<<<< _lf_schedule_at_tag: 11\n");
             pqueue_insert(event_q, e);
         } else {
-            // printf("<<<<<< _lf_schedule_at_tag: 12\n");
+            // // printf("<<<<<< _lf_schedule_at_tag: 12\n");
             // Create a dummy event. Insert it into the queue, and let its next
             // pointer point to the actual event.
             pqueue_insert(event_q, _lf_create_dummy_events(trigger, tag.time, e, relative_microstep));
@@ -962,7 +962,7 @@ handle_t __schedule(trigger_t* trigger, interval_t extra_delay, lf_token_t* toke
         // If schedule is called after stop_tag
         // This is a critical condition.
         __done_using(token);
-        // printf("WARNING: schedule() called after stop tag.\n");
+        // // printf("WARNING: schedule() called after stop tag.\n");
         return 0;
     }
 
@@ -971,9 +971,9 @@ handle_t __schedule(trigger_t* trigger, interval_t extra_delay, lf_token_t* toke
     //     extra_delay = 0LL;
     // }
 
-    //printf("DEBUG: __schedule: scheduling trigger %p with delay %lld and token %p.\n", trigger, extra_delay, token);
+    //// printf("DEBUG: __schedule: scheduling trigger %p with delay %lld and token %p.\n", trigger, extra_delay, token);
     // if (token != NULL) {
-    //     printf("DEBUG: __schedule: integer payload at %d.\n", *(int *)token->value);
+    //     // printf("DEBUG: __schedule: integer payload at %d.\n", *(int *)token->value);
     // }
     
 	// The trigger argument could be null, meaning that nothing is triggered.
@@ -1026,7 +1026,7 @@ handle_t __schedule(trigger_t* trigger, interval_t extra_delay, lf_token_t* toke
         // - we have eliminated the possibility to have a negative additional delay; and
         // - we detect the asynchronous use of logical actions
         if (intended_time < current_tag.time) {
-            // fprintf(stderr, "WARNING: Attempting to schedule an event earlier than current logical time by %lld nsec!\n"
+            // f// printf(stderr, "WARNING: Attempting to schedule an event earlier than current logical time by %lld nsec!\n"
             //         "Revising request to the current time %lld.\n", current_tag.time - intended_time, current_tag.time);
             intended_time = current_tag.time;
         }
@@ -1052,7 +1052,7 @@ handle_t __schedule(trigger_t* trigger, interval_t extra_delay, lf_token_t* toke
                 intended_tag.microstep++;
             }
             if (_lf_is_tag_after_stop_tag(intended_tag)) {
-                printf("WARNING: Attempt to schedule an event after stop_tag was rejected.\n");
+                // printf("WARNING: Attempt to schedule an event after stop_tag was rejected.\n");
                 // Scheduling an event will incur a microstep
                 // after the stop tag.
                 _lf_recycle_event(e);
@@ -1070,14 +1070,14 @@ handle_t __schedule(trigger_t* trigger, interval_t extra_delay, lf_token_t* toke
         // earliest time at which the new event can be scheduled.
         // Check to see whether the event is too early. 
         instant_t earliest_time = existing->time + min_spacing;
-        //printf("DEBUG: >>> check min spacing <<<\n");
-        //printf("DEBUG: earliest: %lld, tag: %lld\n", earliest_time, tag);
+        //// printf("DEBUG: >>> check min spacing <<<\n");
+        //// printf("DEBUG: earliest: %lld, tag: %lld\n", earliest_time, tag);
         // If the event is early, see which policy applies.
         if (earliest_time >= intended_time) {
-            //printf("DEBUG: >>> early <<<\n");
+            //// printf("DEBUG: >>> early <<<\n");
             switch(trigger->policy) {
                 case drop:
-                    //printf("DEBUG: >>> drop <<<\n");
+                    //// printf("DEBUG: >>> drop <<<\n");
                     if (min_spacing > 0 || 
                             pqueue_find_equal_same_priority(event_q, existing) != NULL) {
                         // Recycle the new event and the token.
@@ -1088,7 +1088,7 @@ handle_t __schedule(trigger_t* trigger, interval_t extra_delay, lf_token_t* toke
                         return(0);
                     }
                 case replace:
-                    //printf("DEBUG: >>> replace <<<\n");
+                    //// printf("DEBUG: >>> replace <<<\n");
                     // If the existing event has not been handled yet, update
                     // it. WARNING: If provide a mechanism for unscheduling, we
                     // can no longer rely on the tag of the existing event to
@@ -1323,7 +1323,7 @@ handle_t _lf_schedule_int(void* action, interval_t extra_delay, int value) {
     // until schedule_value is called. This should be OK because the element_size
     // does not change dynamically.
     if (trigger->element_size != sizeof(int)) {
-        // fprintf(stderr, "Action type is not an integer.");
+        // f// printf(stderr, "Action type is not an integer.");
         return -1;
     }
     int* container = (int*)malloc(sizeof(int));
@@ -1344,7 +1344,7 @@ handle_t _lf_schedule_int(void* action, interval_t extra_delay, int value) {
 lf_token_t* __set_new_array_impl(lf_token_t* token, int length, int num_destinations) {
     // If the template token cannot carry a payload, then it is incompatible.
     if (token->element_size == 0) {
-        // fprintf(stderr, "ERROR: set_new_array: specified token cannot carry an array. It has zero element_size.\n");
+        // f// printf(stderr, "ERROR: set_new_array: specified token cannot carry an array. It has zero element_size.\n");
         return NULL;
     }
     // First, initialize the token, reusing the one given if possible.
@@ -1429,7 +1429,7 @@ void schedule_output_reactions(reaction_t* reaction, int worker) {
         }
     }
     if (downstream_to_execute_now != NULL) {
-        //  printf("DEBUG: Optimizing and executing downstream reaction now.\n");
+        //  // printf("DEBUG: Optimizing and executing downstream reaction now.\n");
         bool violation = false;
 #ifdef _LF_COORD_DECENTRALIZED // Only use the Tardy handler for federated programs that use decentralized coordination
         // If the is_tardy for the reaction is true,
@@ -1553,24 +1553,24 @@ lf_token_t* writable_copy(lf_token_t* token) {
  */
 void usage(int argc, char* argv[]) {
     /*
-    printf("\nCommand-line arguments: \n\n");
-    printf("  -f, --fast [true | false]\n");
-    printf("   Whether to wait for physical time to match logical time.\n\n");
-    printf("  -o, --timeout <duration> <units>\n");
-    printf("   Stop after the specified amount of logical time, where units are one of\n");
-    printf("   nsec, usec, msec, sec, minute, hour, day, week, or the plurals of those.\n\n");
-    printf("  -k, --keepalive\n");
-    printf("   Whether continue execution even when there are no events to process.\n\n");
-    printf("  -t, --threads <n>\n");
-    printf("   Executed in <n> threads if possible (optional feature).\n\n");
-    printf("  -i, --id <n>\n");
-    printf("   The ID of the federation that this reactor will join.\n\n");
+    // printf("\nCommand-line arguments: \n\n");
+    // printf("  -f, --fast [true | false]\n");
+    // printf("   Whether to wait for physical time to match logical time.\n\n");
+    // printf("  -o, --timeout <duration> <units>\n");
+    // printf("   Stop after the specified amount of logical time, where units are one of\n");
+    // printf("   nsec, usec, msec, sec, minute, hour, day, week, or the plurals of those.\n\n");
+    // printf("  -k, --keepalive\n");
+    // printf("   Whether continue execution even when there are no events to process.\n\n");
+    // printf("  -t, --threads <n>\n");
+    // printf("   Executed in <n> threads if possible (optional feature).\n\n");
+    // printf("  -i, --id <n>\n");
+    // printf("   The ID of the federation that this reactor will join.\n\n");
 
-    printf("Command given:\n");
+    // printf("Command given:\n");
     for (int i = 0; i < argc; i++) {
-        printf("%s ", argv[i]);
+        // printf("%s ", argv[i]);
     }
-    printf("\n\n");
+    // printf("\n\n");
     */
 }
 
@@ -1595,7 +1595,7 @@ int process_args(int argc, char* argv[]) {
     for (int i = 1; i < argc; i++) {
         if (strcmp(argv[i], "-f") == 0 || strcmp(argv[i], "--fast") == 0) {
             if (argc < i + 2) {
-                // printf("Error: --fast needs a boolean.\n");
+                // // printf("Error: --fast needs a boolean.\n");
                 usage(argc, argv);
                 return 0;
             }
@@ -1606,14 +1606,14 @@ int process_args(int argc, char* argv[]) {
             } else if (strcmp(fast_spec, "false") == 0) {
                 fast = false;
             } else {
-                // printf("Error: Invalid value for --fast: %s\n", fast_spec);
+                // // printf("Error: Invalid value for --fast: %s\n", fast_spec);
             }
        } else if (strcmp(argv[i], "-o") == 0
                || strcmp(argv[i], "--timeout") == 0
                || strcmp(argv[i], "-timeout") == 0) {
            // Tolerate -timeout for legacy uses.
            if (argc < i + 3) {
-               // fprintf(stderr, "Error: --timeout needs time and units.\n");
+               // f// printf(stderr, "Error: --timeout needs time and units.\n");
                usage(argc, argv);
                return 0;
            }
@@ -1624,7 +1624,7 @@ int process_args(int argc, char* argv[]) {
            // A parse error returns 0LL, so check to see whether that is what is meant.
            if (duration == 0LL && strncmp(time_spec, "0", 1) != 0) {
         	   // Parse error.
-        	   // fprintf(stderr,"Error: invalid time value: %s", time_spec);
+        	   // f// printf(stderr,"Error: invalid time value: %s", time_spec);
         	   usage(argc, argv);
         	   return 0;
            }
@@ -1646,13 +1646,13 @@ int process_args(int argc, char* argv[]) {
         	   duration = WEEK(duration);
            } else {
         	   // Invalid units.
-        	   // fprintf(stderr,"Error: invalid time units: %s", units);
+        	   // f// printf(stderr,"Error: invalid time units: %s", units);
         	   usage(argc, argv);
         	   return 0;
            }
        } else if (strcmp(argv[i], "-k") == 0 || strcmp(argv[i], "--keepalive") == 0) {
     	   if (argc < i + 2) {
-    		   // fprintf(stderr,"Error: --keepalive needs a boolean.\n");
+    		   // f// printf(stderr,"Error: --keepalive needs a boolean.\n");
     		   usage(argc, argv);
     		   return 0;
     	   }
@@ -1663,11 +1663,11 @@ int process_args(int argc, char* argv[]) {
     	   } else if (strcmp(keep_spec, "false") == 0) {
     		   keepalive_specified = false;
     	   } else {
-    		   // fprintf(stderr,"Error: Invalid value for --keepalive: %s\n", keep_spec);
+    		   // f// printf(stderr,"Error: Invalid value for --keepalive: %s\n", keep_spec);
     	   }
        } else if (strcmp(argv[i], "-t") == 0 || strcmp(argv[i], "--threads") == 0) {
     	   if (argc < i + 2) {
-    		   // fprintf(stderr,"Error: --threads needs an integer argument.\n");
+    		   // f// printf(stderr,"Error: --threads needs an integer argument.\n");
     		   usage(argc, argv);
     		   return 0;
     	   }
@@ -1675,19 +1675,19 @@ int process_args(int argc, char* argv[]) {
     	   char* threads_spec = argv[i++];
     	   _lf_number_of_threads = atoi(threads_spec);
     	   if (_lf_number_of_threads <= 0) {
-    		   // fprintf(stderr,"Error: Invalid value for --threads: %s\n", threads_spec);
+    		   // f// printf(stderr,"Error: Invalid value for --threads: %s\n", threads_spec);
     	   }
        } else if (strcmp(argv[i], "-i") == 0 || strcmp(argv[i], "--id") == 0) {
            if (argc < i + 2) {
-               // fprintf(stderr,"Error: --id needs a string argument.\n");
+               // f// printf(stderr,"Error: --id needs a string argument.\n");
                usage(argc, argv);
                return 0;
            }
            i++;
-           // printf("Federation ID for executable %s: %s\n", argv[0], argv[i]);
+           // // printf("Federation ID for executable %s: %s\n", argv[0], argv[i]);
            federation_id = argv[i++];
        } else {
-    	   // fprintf(stderr,"Error: Unrecognized command-line argument: %s\n", argv[i]);
+    	   // f// printf(stderr,"Error: Unrecognized command-line argument: %s\n", argv[i]);
     	   usage(argc, argv);
     	   return 0;
        }
@@ -1735,7 +1735,7 @@ void initialize() {
     clock_gettime(CLOCK_REALTIME, &actualStartTime);
     physical_start_time = actualStartTime.tv_sec * BILLION + actualStartTime.tv_nsec;
 
-    // printf("---- Start execution at time %s---- plus %ld nanoseconds.\n",
+    // // printf("---- Start execution at time %s---- plus %ld nanoseconds.\n",
             // ctime(&actualStartTime.tv_sec), actualStartTime.tv_nsec);
     current_tag.time = physical_start_time;
     start_time = current_tag.time;
@@ -1754,31 +1754,31 @@ void termination() {
 
     // If the event queue still has events on it, report that.
     if (event_q != NULL && pqueue_size(event_q) > 0) {
-        // printf("---- There are %zu unprocessed future events on the event queue.\n", pqueue_size(event_q));
+        // // printf("---- There are %zu unprocessed future events on the event queue.\n", pqueue_size(event_q));
         event_t* event = (event_t*)pqueue_peek(event_q);
         interval_t event_time = event->time - start_time;
-        // printf("---- The first future event has timestamp %lld after start time.\n", event_time);
+        // // printf("---- The first future event has timestamp %lld after start time.\n", event_time);
     }
     // Issue a warning if a memory leak has been detected.
     if (__count_payload_allocations > 0) {
-        // printf("**** WARNING: Memory allocated for messages has not been freed.\n");
-        // printf("**** Number of unfreed messages: %d.\n", __count_payload_allocations);
+        // // printf("**** WARNING: Memory allocated for messages has not been freed.\n");
+        // // printf("**** Number of unfreed messages: %d.\n", __count_payload_allocations);
     }
     if (__count_token_allocations > 0) {
-        // printf("**** WARNING: Memory allocated for tokens has not been freed!\n");
-        // printf("**** Number of unfreed tokens: %d.\n", __count_token_allocations);
+        // // printf("**** WARNING: Memory allocated for tokens has not been freed!\n");
+        // // printf("**** Number of unfreed tokens: %d.\n", __count_token_allocations);
     }
     // Print elapsed times.
-    // printf("---- Elapsed logical time (in nsec): ");
+    // // printf("---- Elapsed logical time (in nsec): ");
     // print_time(get_elapsed_logical_time());
-    // printf("\n");
+    // // printf("\n");
 
     // If physical_start_time is 0, then execution didn't get far enough along
     // to initialize this.
     if (physical_start_time > 0LL) {
-        // printf("---- Elapsed physical time (in nsec): ");
+        // // printf("---- Elapsed physical time (in nsec): ");
         // print_time(get_elapsed_physical_time());
-        // printf("\n");
+        // // printf("\n");
     }
 }
 

@@ -31,6 +31,20 @@ THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *  @author{Marten Lohstroh <marten@berkeley.edu>}
  */
 
+
+#ifndef NO_MAGIC_STAMP
+#define magic_stamp_addr (volatile uint32_t *)0x8F000000
+// write 0x8F_id_149A
+#define magic_start_stamp(stamp_id) \
+  *magic_stamp_addr = ((stamp_id & 0x00FF0000) | 0x149a);
+// write 0x8F_id_249a
+#define magic_end_stamp(stamp_id) \
+  *magic_stamp_addr = ((stamp_id & 0x00FF0000) | 0x249a);
+#else
+#define magic_start_stamp(stamp_id) ; // do nothing
+#define magic_end_stamp(stamp_id)  ; // do nothing
+#endif
+
 // RISC-V Bare Metal Support
 #include "bare_metal.c"
 #include "spike_util.c"
@@ -222,7 +236,9 @@ int _lf_do_step() {
         if (!violation) {
             // Invoke the reaction function.
             tracepoint_reaction_starts(reaction, 0); // 0 indicates unthreaded.
+magic_start_stamp(0)
             reaction->function(reaction->self);
+magic_end_stamp(0)
             tracepoint_reaction_ends(reaction, 0);
 
             // If the reaction produced outputs, put the resulting triggered
@@ -349,12 +365,12 @@ int main(int argc, char* argv[]) {
             while (next() != 0);
         }
         termination();
+        return(0);
         // __spike_return(0);
-        return 0;
     } else {
         // printf("DEBUG: invoking termination.\n");
         termination();
+        return(1);
         // __spike_return(1);
-        return 1;
     }
 }

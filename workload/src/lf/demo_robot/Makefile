@@ -2,7 +2,7 @@
 XLEN ?= 32
 
 
-src_dir = ../../../
+src_dir = ../../
 
 #--------------------------------------------------------------------
 # Build rules
@@ -31,7 +31,7 @@ deps := $(wildcard ./src-gen/*.c) \
 		$(wildcard $(src_dir)/common/*.S)
 
 
-demo_robot_no_print.riscv: ${deps}
+demo_robot_with_print.riscv: ${deps}
 	$(RISCV_GCC) $(incs) $(RISCV_GCC_OPTS) $(RISCV_LINK_OPTS) -o $@ \
 	$(wildcard ./*.c) \
 	$(wildcard ./*.h) \
@@ -39,14 +39,14 @@ demo_robot_no_print.riscv: ${deps}
 	$(wildcard $(src_dir)/common/*.S)
 
 
-demo_robot_no_print.dump: demo_robot_no_print.riscv
+demo_robot_with_print.dump: demo_robot_with_print.riscv
 	$(RISCV_OBJDUMP) $< > $@
 
-demo_robot_no_print.dump.annot: demo_robot_no_print.riscv
+demo_robot_with_print.dump.annot: demo_robot_with_print.riscv
 	$(RISCV_OBJDUMP) -S $< > $@
 
 
-all: demo_robot_no_print.riscv demo_robot_no_print.dump demo_robot_no_print.dump.annot
+all: demo_robot_with_print.riscv demo_robot_with_print.dump demo_robot_with_print.dump.annot
 
 
 clean:
