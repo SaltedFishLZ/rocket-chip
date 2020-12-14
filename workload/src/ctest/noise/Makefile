@@ -25,13 +25,21 @@ noise.riscv: $(wildcard ./*.c) $(wildcard $(src_dir)/common/*.c) $(wildcard $(sr
 	$(wildcard ./*.c) \
 	$(wildcard $(src_dir)/common/*.c) $(wildcard $(src_dir)/common/*.S)
 
+noise.nostamp.riscv: $(wildcard ./*.c) $(wildcard $(src_dir)/common/*.c) $(wildcard $(src_dir)/common/*.S)
+	$(RISCV_GCC) $(incs) $(RISCV_GCC_OPTS) -D NO_MAGIC_STAMP $(RISCV_LINK_OPTS) -o $@ \
+	$(wildcard ./*.c) \
+	$(wildcard $(src_dir)/common/*.c) $(wildcard $(src_dir)/common/*.S)
+
 noise.dump: noise.riscv
 	$(RISCV_OBJDUMP) $< > $@
 
 noise.dump.annot: noise.riscv
 	$(RISCV_OBJDUMP) -S $< > $@
 
-all: noise.riscv noise.dump noise.dump.annot
+noise.nostamp.dump.annot: noise.nostamp.riscv
+	$(RISCV_OBJDUMP) -S $< > $@
+
+all: noise.riscv noise.nostamp.riscv noise.dump noise.dump.annot noise.nostamp.dump.annot
 
 clean:
 	-rm -rf *.riscv *.dump *.dump.annot
