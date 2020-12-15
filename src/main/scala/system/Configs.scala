@@ -80,10 +80,19 @@ class BaseFPGAConfig extends Config(new BaseConfig)
 class DefaultFPGAConfig extends Config(new WithNSmallCores(1) ++ new BaseFPGAConfig)
 
 
+// --------------------------------
 // 32-bit RISC-V processors
+// --------------------------------
+
 class DefaultRV32Config extends Config(new WithRV32 ++ new DefaultConfig)
 class DefaultRV32ConfigRBB extends Config(
   new WithJtagDTMSystem ++
   new WithRV32 ++
   new DefaultConfig
 )
+class DefaultBufferlessRV32Config extends Config(new WithRV32 ++ new DefaultBufferlessConfig)
+
+class DefaultRV32SmallConfig extends Config(new WithRV32 ++ new DefaultSmallConfig)
+
+
+class DefaultRV32TinyConfig extends Config(new WithRV32 ++ new TinyConfig)
