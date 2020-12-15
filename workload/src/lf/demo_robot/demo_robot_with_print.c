@@ -1,4 +1,4 @@
-#include "stdio.h"
+// #include "stdio.h"
 
 #include "ctarget.h"
 
@@ -121,7 +121,7 @@ void controllerreaction_function_1(void* instance_args) {
     switch(self->_state) {
         // OFF
         case 0 : {
-            // printf("State OFF\n");
+            printf("State OFF\n");
             move->value[0] = self->stop_speed;
             move->value[1] = self->stop_speed;
             break;
@@ -133,7 +133,7 @@ void controllerreaction_function_1(void* instance_args) {
                 break;
             }
             
-            // printf("State DRIVING\n");
+            printf("State DRIVING\n");
             // FIXME: need to use sensors
             self->driving_distance += 1; 
             
@@ -153,7 +153,7 @@ void controllerreaction_function_1(void* instance_args) {
                 break;
             }
             
-            // printf("State TURNING\n");
+            printf("State TURNING\n");
             // FIXME: need to use sensors
             self->turning_distance += 1; 
             
@@ -168,7 +168,7 @@ void controllerreaction_function_1(void* instance_args) {
         }
         //BACKING UP
         case 3: {
-            // printf("State BACKING UP\n");
+            printf("State BACKING UP\n");
             // FIXME: need to use sensors
             self->backing_distance += 1;
             //cliff sensor
@@ -347,7 +347,7 @@ void motorsreaction_function_0(void* instance_args) {
     int _in_width = self->___in__width;
     #line 148 "file:/lf-flexpret-scripts/lf/demo/demo_robot_with_print.lf"
     if (!self->stopped) {
-        // printf("left motor: %d, right motor: %d\n", _in->value[0], _in->value[1]);   
+        printf("left motor: %d, right motor: %d\n", _in->value[0], _in->value[1]);   
     }
         
 }
@@ -494,7 +494,7 @@ void sensorsreaction_function_1(void* instance_args) {
     sensors_button_out_t* button_out = &self->__button_out;
     #line 22 "file:/lf-flexpret-scripts/lf/demo/demo_robot_with_print.lf"
     self->button = !self->button;
-    // printf("Button status: %d\n", self->button);
+    printf("Button status: %d\n", self->button);
     SET(button_out, self->button);
         
 }
@@ -504,7 +504,7 @@ void sensorsreaction_function_2(void* instance_args) {
     #line 31 "file:/lf-flexpret-scripts/lf/demo/demo_robot_with_print.lf"
     if (self->time_to_next_bump == 0) {
                 SET(bumper_out, true);
-                // printf("Bumper detects an obstacle!\n");
+                printf("Bumper detects an obstacle!\n");
                 self->time_to_next_bump = 25;
             } else {
                 SET(bumper_out, false);
